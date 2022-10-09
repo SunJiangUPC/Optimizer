@@ -34,30 +34,27 @@ void PSOFuction::target_function()
 void PSOFuction::readdata(const string& filename)
 {
 	// 文本文件格式
-	// N: 数组维度
-	// b: 数据行, 共N行
-	vector<double> b;
-	int N = 0;
-	ifstream infile(filename);
-	string line;
-	if (infile) // 有该文件
-	{
-		// N
-		getline(infile, line);
-		
-		N = atoi(line.c_str());
-		b.resize(N);
-		// b
-		for (int i = 0; i < N; i++)
-		{
-			getline(infile, line);
-			b[i] = atof(line.c_str());
-		}
+	vector<vector<double>> mat;//q = data(:, 1); d = data(:, 2); R = data(:, 3); Pt = data(:, 4); dfw = data(:, 5);
+	readmatrix(filename, mat);
+	int M = mat.size();
+	int N = mat[0].size();
+	if (N != 5) {
+		printf("ERROR: 读取真实测试数据的长度不足!\n");
 	}
-	else // 没有该文件
-	{
-		printf("no such file\n");
+	v2TrueVariable.resize(M);//真实变量值
+	v2TrueResult.resize(M);//真实函数值
+	for (int i = 0; i < M; i++) {
+		v2TrueVariable[i].resize(4);
+		v2TrueResult[i].resize(1);
 	}
+	for (int i = 0; i < M; i++) {
+		v2TrueVariable[i][0] = mat[i][1];
+		v2TrueVariable[i][1] = mat[i][2];
+		v2TrueVariable[i][2] = mat[i][3];
+		v2TrueVariable[i][3] = mat[i][4];
+		v2TrueResult[i][0] = mat[i][0];
+	}
+
 }
 
 
@@ -94,25 +91,40 @@ void readvector(const string& filename, vector<double>& vec)
 void readmatrix(const string& filename, vector<vector<double>>& mat)
 {
 	// 文本文件格式
-	// M, N: 数组维度
+	// M: 数组行数
+	// N: 数组列数
 	// mat: 数据行, 共M行 * N列
-	int M = 0, N = 0;
+	int M = 0, N = 0, num = 0;
 	ifstream infile(filename);
 	string line;
-	vector<double> Dimension(2);
 	vector<double> vec;
 	if (infile) // 有该文件
 	{
-		// M 与 N
+		// M
 		getline(infile, line);
-
+		M = atoi(line.c_str());
+		// N
+		getline(infile, line);
 		N = atoi(line.c_str());
-		mat.resize(N);
+
+		mat.resize(M);
+		for (int i = 0; i < M; i++) {
+			mat[i].resize(N);
+		}
+		vec.resize(N);
 		// 数据行
-		for (int i = 0; i < N; i++)
+		for (int i = 0; i < M; i++)
 		{
 			getline(infile, line);
-			mat[i][0] = atof(line.c_str());
+			num = string2vector(line, vec);
+			if (num != N) {
+				printf("ERROR: 转换的数组长度不等于设置N=%d\n", N);
+			}
+			else {
+				for (int j = 0; j < N; j++) {
+					mat[i][j] = vec[j];
+				}
+			}
 		}
 	}
 	else // 没有该文件
@@ -123,7 +135,7 @@ void readmatrix(const string& filename, vector<vector<double>>& mat)
 }
 
 // 分割字符串并转换为数组
-void string2vector(const string& str, vector<double>& vec)
+int string2vector(const string& str, vector<double>& vec)
 {
 	char cstr[30];// = "123\tds\nc";
 	int j = 0, num = 0;
@@ -149,6 +161,7 @@ void string2vector(const string& str, vector<double>& vec)
 		vec[num] = atof(cstr);
 		num++;
 	}
+	return num;
 
 	// printf("%.4f\n", atof("2.45"));
 	// printf("%.4f\n", atof("0.005"));

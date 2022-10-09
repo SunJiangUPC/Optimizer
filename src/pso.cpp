@@ -121,4 +121,50 @@ void ParticleSwarmOptimization::printInfo(int nIter)
 	}
 }
 
+double ParticleSwarmOptimization::getrand()
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	return std::generate_canonical<double, 1>(gen);
+}
+void ParticleSwarmOptimization::getrand(vector<double>& vec)
+{
+	int N = vec.size();
+	if (N < 1) {
+		printf("ERROR: 数组未初始化,无法计算随机数!\n");
+	}
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	for (int i = 0; i < N; i++) {
+		vec[i] = generate_canonical<double, 20>(gen);//1 ? N
+	}
+
+}
+
+
+
+void ParticleSwarmOptimization::error_estimate()
+{
+	// 误差评价
+	dResidualSquare = 0.0;
+	dMinRelativeResidual = 0.0;
+	dMaxRelativeResidual = 0.0;
+	dMaxAbsRelativeResidual = 0.0;
+
+}
+
+void ParticleSwarmOptimization::initial()
+{
+	// 初始化粒子速度与位置
+}
+
+void ParticleSwarmOptimization::refresh()
+{
+	// 更新粒子速度与位置
+}
+
+void ParticleSwarmOptimization::limited()
+{
+	// 速度与位置范围约束
+}
 

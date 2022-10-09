@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <random>
 
 using namespace std;
 
@@ -53,6 +54,8 @@ private:
 }PSOCreat;
 
 
+
+
 typedef class ParticleSwarmOptimizationFuction
 {
 public:
@@ -70,6 +73,8 @@ public:
 	vector<vector<double>> v2TrueResult;//真实函数值
 	void readdata(const string& filename);
 }PSOFuction;
+
+
 
 class ParticleSwarmOptimization
 {
@@ -89,10 +94,13 @@ private:
 	double dMinRelativeResidual = 0.0;
 	double dMaxRelativeResidual = 0.0;
 	double dMaxAbsRelativeResidual = 0.0;
-	// 误差评价
-	void error_estimate();
+	// 获取随机数[0, 1)
+	double getrand();
+	void getrand(vector<double>& vec);
 	// 输出第nIter次迭代的计算信息
 	void printInfo(int nIter);
+	// 误差评价
+	void error_estimate();
 	// 初始化粒子速度与位置
 	void initial();
 	// 更新粒子速度与位置
@@ -108,7 +116,7 @@ void readvector(const string& filename, vector<double>& vec);
 // 读取矩阵
 void readmatrix(const string& filename, vector<vector<double>>& mat);
 // 分割字符串并转换为数组
-void string2vector(const string& str, vector<double>& vec);
+int string2vector(const string& str, vector<double>& vec);//返回vec长度和vec
 
 
 
